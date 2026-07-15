@@ -2,10 +2,10 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "landing",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "8420"],
-      "port": 8420
+      "name": "dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 5173
     }
   ]
 }
