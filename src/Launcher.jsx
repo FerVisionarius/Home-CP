@@ -46,6 +46,8 @@ export default function Launcher() {
           <a
             key={tool.id}
             href={tool.url}
+            target="_blank"
+            rel="noopener noreferrer"
             className="group bg-bg-200 border border-bg-300 rounded-2xl p-6 flex flex-col gap-3 hover:border-accent-100 hover:shadow-md transition-all"
           >
             <div className="w-11 h-11 rounded-xl bg-primary-100 text-accent-200 flex items-center justify-center group-hover:bg-accent-200 group-hover:text-white transition-colors">
