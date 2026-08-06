@@ -25,12 +25,29 @@ const TOOLS = [
       </svg>
     ),
   },
+  {
+    id: 'desarrollo',
+    label: 'Desarrollo',
+    desc: 'Pruebas de agentes de chat y Retell',
+    url: 'https://developer.clubpilatesia.es',
+    restricted: true,
+    icon: (
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+      </svg>
+    ),
+  },
 ]
 
 export default function Launcher() {
-  const { profile, permissions, signOut } = useAuth()
+  const { profile, permissions, toolAccess, isSuperAdmin, signOut } = useAuth()
 
-  const visibleTools = TOOLS.filter(tool => tool.alwaysVisible || permissions[tool.id] !== false)
+  const visibleTools = TOOLS.filter(tool => {
+    // Herramientas restringidas: visibles para superadmin o para usuarios con
+    // acceso explícito concedido en Ajustes (independiente del rol).
+    if (tool.restricted) return isSuperAdmin || toolAccess[tool.id] === true
+    return tool.alwaysVisible || permissions[tool.id] !== false
+  })
 
   return (
     <div className="min-h-screen flex flex-col items-center px-6 py-16">

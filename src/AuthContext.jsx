@@ -17,17 +17,34 @@ async function fetchPermissions(role) {
   return map
 }
 
+// Accesos a herramientas concretos de este usuario (además del rol).
+async function fetchToolAccess() {
+  const { data } = await supabase
+    .from('user_tool_access')
+    .select('tool_id, enabled')
+
+  const map = {}
+  ;(data || []).forEach(r => { map[r.tool_id] = r.enabled })
+  return map
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [profile, setProfile] = useState(null)
   const [permissions, setPermissions] = useState({})
+  const [toolAccess, setToolAccess] = useState({})
   const [loading, setLoading] = useState(true)
 
   async function fetchProfile() {
     const { data, error } = await supabase.rpc('get_my_profile')
     if (!error && data) {
       setProfile(data)
-      setPermissions(await fetchPermissions(data.role))
+      const [perms, tools] = await Promise.all([
+        fetchPermissions(data.role),
+        fetchToolAccess(),
+      ])
+      setPermissions(perms)
+      setToolAccess(tools)
     }
     setLoading(false)
   }
@@ -72,6 +89,7 @@ export function AuthProvider({ children }) {
         } else {
           setProfile(null)
           setPermissions({})
+          setToolAccess({})
           setLoading(false)
         }
       }, 0)
@@ -97,7 +115,7 @@ export function AuthProvider({ children }) {
   const isAdmin = profile?.role === 'admin' || isSuperAdmin
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, isAdmin, isSuperAdmin, permissions, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, profile, loading, isAdmin, isSuperAdmin, permissions, toolAccess, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   )
