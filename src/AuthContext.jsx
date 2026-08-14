@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { supabase } from './lib/supabase'
+import { supabase, SUPABASE_FUNCTIONS_URL, SUPABASE_KEY } from './lib/supabase'
+import { signInWithLockout } from './lib/authLogin'
 import { isAuthRecoveryRoute } from './lib/authRecovery'
 
 const AuthContext = createContext(null)
@@ -103,8 +104,7 @@ export function AuthProvider({ children }) {
   }, [])
 
   async function signIn(email, password) {
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-    return { error }
+    return signInWithLockout(supabase, SUPABASE_FUNCTIONS_URL, SUPABASE_KEY, email, password)
   }
 
   async function signOut() {
