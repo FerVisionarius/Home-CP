@@ -20,9 +20,12 @@ async function fetchPermissions(role) {
 
 // Accesos a herramientas concretos de este usuario (además del rol).
 async function fetchToolAccess() {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return {}
   const { data } = await supabase
     .from('user_tool_access')
     .select('tool_id, enabled')
+    .eq('user_id', user.id)
 
   const map = {}
   ;(data || []).forEach(r => { map[r.tool_id] = r.enabled })
